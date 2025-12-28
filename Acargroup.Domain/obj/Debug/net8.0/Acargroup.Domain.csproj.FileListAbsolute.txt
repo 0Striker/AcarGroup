@@ -1,0 +1,11 @@
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/bin/Debug/net8.0/Acargroup.Domain.deps.json
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/bin/Debug/net8.0/Acargroup.Domain.dll
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/bin/Debug/net8.0/Acargroup.Domain.pdb
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/Acargroup.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/Acargroup.Domain.AssemblyInfoInputs.cache
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/Acargroup.Domain.AssemblyInfo.cs
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/Acargroup.Domain.csproj.CoreCompileInputs.cache
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/Acargroup.Domain.dll
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/refint/Acargroup.Domain.dll
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/Acargroup.Domain.pdb
+/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/ref/Acargroup.Domain.dll

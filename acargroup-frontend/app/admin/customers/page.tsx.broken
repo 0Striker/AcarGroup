@@ -1,0 +1,983 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { getToken, Customer } from "@/lib/auth";
+
+// Fetches /api/customers using the shared acargroup_* JWT so admin customer UI stays in sync.
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5203";
+
+export default function AdminCustomersPage() {
+    const [customers, setCustomers] = useState<Customer[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+    const [customerJobs, setCustomerJobs] = useState<any[]>([]);
+    const [customerTransactions, setCustomerTransactions] = useState<any[]>([]);
+    const [customerBalance, setCustomerBalance] = useState<any>(null);
+    const [customerAddresses, setCustomerAddresses] = useState<any[]>([]);
+    const [customerProducts, setCustomerProducts] = useState<any[]>([]);
+    const [customerDocuments, setCustomerDocuments] = useState<any[]>([]);
+    const [uploadingDoc, setUploadingDoc] = useState(false);
+    const [detailTab, setDetailTab] = useState<"profile" | "jobs" | "finance" | "addresses" | "products" | "invoices" | "waybills" | "offers">("profile");
+    const [detailsLoading, setDetailsLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [formData, setFormData] = useState({
+        fullName: "",
+        email: "",
+        phone: "",
+        password: "",
+        tc: "",
+        vkn: "",
+        addressLabel: "Ev",
+        city: "",
+        district: "",
+        fullAddress: ""
+    });
+    const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+    const [editFormData, setEditFormData] = useState({
+        fullName: "",
+        email: "",
+        phone: "",
+        tc: "",
+        vkn: "",
+        isActive: true
+    });
+    const [showAddressForm, setShowAddressForm] = useState(false);
+    const [newAddress, setNewAddress] = useState({
+        label: "Ev",
+        city: "",
+        district: "",
+        fullAddress: "",
+        postalCode: ""
+    });
+
+    const filteredCustomers = customers.filter(customer =>
+        customer.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        customer.phone.includes(searchQuery)
+    );
+
+    const handleExport = () => {
+        const dataStr = JSON.stringify(filteredCustomers, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `musteriler_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    useEffect(() => {
+        const fetchCustomers = async () => {
+            const token = getToken();
+
+            if (!token) {
+                setError("Oturum bilgisi bulunamadı. Lütfen giriş yapın.");
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/customers`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        setError("Yetkiniz yok veya oturum süreniz dolmuş. Lütfen tekrar giriş yapın.");
+                    } else {
+                        setError("Müşteri verileri alınırken bir hata oluştu.");
+                    }
+                    setLoading(false);
+                    return;
+                }
+
+                const data = await response.json();
+                setCustomers(data);
+                setLoading(false);
+            } catch (err) {
+                console.error(err);
+                setError("Müşteri verileri alınırken bir hata oluştu.");
+                setLoading(false);
+            }
+        };
+
+        fetchCustomers();
+    }, []);
+
+    const handleCreateCustomer = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const token = getToken();
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/customers`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                alert("Müşteri başarıyla eklendi!");
+                setShowCreateForm(false);
+                setFormData({ fullName: "", email: "", phone: "", password: "", tc: "", vkn: "", addressLabel: "Ev", city: "", district: "", fullAddress: "" });
+                // Refresh list
+                const data = await (await fetch(`${API_BASE_URL}/api/customers`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })).json();
+                setCustomers(data);
+            } else {
+                const error = await response.json();
+                alert(error.message || "Müşteri eklenemedi.");
+            }
+        } catch (error) {
+            console.error("Error creating customer:", error);
+            alert("Bir hata oluştu.");
+        }
+    };
+
+    const handleEdit = (customer: Customer) => {
+        setEditingCustomer(customer);
+        setEditFormData({
+            fullName: customer.fullName,
+            email: customer.email,
+            phone: customer.phone,
+            tc: (customer as any).tc || "",
+            vkn: (customer as any).vkn || "",
+            isActive: customer.isActive
+        });
+    };
+
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingCustomer) return;
+
+        const token = getToken();
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/customers/${editingCustomer.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(editFormData),
+            });
+
+            if (response.ok) {
+                alert("Müşteri güncellendi!");
+                setEditingCustomer(null);
+                // Refresh list
+                const data = await (await fetch(`${API_BASE_URL}/api/customers`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })).json();
+                setCustomers(data);
+            } else {
+                alert("Güncelleme başarısız.");
+            }
+        } catch (error) {
+            console.error("Error updating customer:", error);
+            alert("Bir hata oluştu.");
+        }
+    };
+
+    const handleDelete = async (customerId: number, customerName: string) => {
+        if (!confirm(`${customerName} müşterisini silmek istediğinizden emin misiniz?`)) return;
+
+        const token = getToken();
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/customers/${customerId}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (response.ok || response.status === 204) {
+                alert("Müşteri silindi.");
+                // Refresh list
+                const data = await (await fetch(`${API_BASE_URL}/api/customers`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })).json();
+                setCustomers(data);
+            } else {
+                alert("Silme başarısız.");
+            }
+        } catch (error) {
+            console.error("Error deleting customer:", error);
+            alert("Bir hata oluştu.");
+        }
+    };
+
+    const fetchCustomerDetails = async (customer: Customer) => {
+        setSelectedCustomer(customer);
+        setDetailTab("profile");
+        setDetailsLoading(true);
+        const token = getToken();
+        if (!token) return;
+
+        try {
+            const [jobsRes, txRes, balanceRes, addrRes, prodRes, docRes] = await Promise.all([
+                fetch(`${API_BASE_URL}/api/jobs/customer/${customer.id}`, { headers: { Authorization: `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/api/finance/customer/${customer.id}/transactions`, { headers: { Authorization: `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/api/finance/customer/${customer.id}/balance`, { headers: { Authorization: `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/api/customer/addresses/customer/${customer.id}`, { headers: { Authorization: `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/api/customer-purchased-products/customer/${customer.id}`, { headers: { Authorization: `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/api/customer-documents/customer/${customer.id}`, { headers: { Authorization: `Bearer ${token}` } })
+            ]);
+
+            if (jobsRes.ok) setCustomerJobs(await jobsRes.json());
+            if (txRes.ok) setCustomerTransactions(await txRes.json());
+            if (balanceRes.ok) setCustomerBalance(await balanceRes.json());
+            if (addrRes.ok) setCustomerAddresses(await addrRes.json());
+            if (prodRes.ok) setCustomerProducts(await prodRes.json());
+            if (docRes.ok) setCustomerDocuments(await docRes.json());
+
+        } catch (error) {
+            console.error("Error fetching details:", error);
+        } finally {
+            setDetailsLoading(false);
+        }
+    };
+
+    const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>, docType: number) => {
+        if (!e.target.files || !e.target.files[0] || !selectedCustomer) return;
+
+        const file = e.target.files[0];
+        const token = getToken();
+        if (!token) return;
+
+        setUploadingDoc(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('customerId', selectedCustomer.id.toString());
+            formData.append('type', docType.toString());
+
+            const response = await fetch(`${API_BASE_URL}/api/customer-documents/upload`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` },
+                body: formData
+            });
+
+            if (response.ok) {
+                alert('Belge başarıyla yüklendi!');
+                // Refresh documents
+                const docRes = await fetch(`${API_BASE_URL}/api/customer-documents/customer/${selectedCustomer.id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (docRes.ok) setCustomerDocuments(await docRes.json());
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Yükleme başarısız.');
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Bir hata oluştu.');
+        } finally {
+            setUploadingDoc(false);
+            e.target.value = '';
+        }
+    };
+
+    const handleDocumentDelete = async (documentId: number) => {
+        if (!confirm('Bu belgeyi silmek istediğinizden emin misiniz?')) return;
+
+        const token = getToken();
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/customer-documents/${documentId}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.ok || response.status === 204) {
+                alert('Belge silindi.');
+                // Refresh documents
+                if (selectedCustomer) {
+                    const docRes = await fetch(`${API_BASE_URL}/api/customer-documents/customer/${selectedCustomer.id}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (docRes.ok) setCustomerDocuments(await docRes.json());
+                }
+            } else {
+                alert('Silme başarısız.');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert('Bir hata oluştu.');
+        }
+    };
+
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("tr-TR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+    };
+
+    return (
+        <div className="max-w-6xl mx-auto px-4 py-8">
+            {/* Başlık */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h1 className="text-2xl font-semibold text-slate-900 mb-1">Müşteriler</h1>
+                    <p className="text-sm text-slate-600">
+                        Kayıtlı müşterilerinizi buradan görüntüleyebilirsiniz.
+                    </p>
+                </div>
+                <div className="flex gap-3">
+                    <input
+                        type="text"
+                        placeholder="Ara (İsim, E-posta, Tel)..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 min-w-[250px] bg-white text-slate-900"
+                    />
+                    <button
+                        onClick={handleExport}
+                        className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors flex items-center gap-2"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        JSON İndir
+                    </button>
+                    <button
+                        onClick={() => setShowCreateForm(!showCreateForm)}
+                        className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors flex items-center gap-2"
+                    >
+                        {showCreateForm ? "İptal" : "+ Yeni Müşteri"}
+                    </button>
+                </div>
+            </div>
+
+            {/* Create Form */}
+            {showCreateForm && (
+                <div className="mb-6 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h2 className="text-lg font-semibold mb-4 text-slate-800">Yeni Müşteri Ekle</h2>
+                    <form onSubmit={handleCreateCustomer} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Ad Soyad *</label>
+                            <input
+                                type="text"
+                                required
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.fullName}
+                                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">E-posta *</label>
+                            <input
+                                type="email"
+                                required
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Telefon *</label>
+                            <input
+                                type="tel"
+                                required
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.phone}
+                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Şifre *</label>
+                            <input
+                                type="password"
+                                required
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                placeholder="Müşteri için şifre"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">TC Kimlik No</label>
+                            <input
+                                type="text"
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.tc}
+                                onChange={(e) => setFormData({ ...formData, tc: e.target.value })}
+                                placeholder="11 haneli TC no (opsiyonel)"
+                                maxLength={11}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">VKN (Vergi Kimlik No)</label>
+                            <input
+                                type="text"
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.vkn}
+                                onChange={(e) => setFormData({ ...formData, vkn: e.target.value })}
+                                placeholder="10 haneli VKN (opsiyonel)"
+                                maxLength={10}
+                            />
+                        </div>
+                        <div className="md:col-span-2 border-t border-slate-200 pt-4 mt-2">
+                            <h3 className="text-sm font-semibold text-slate-700 mb-3">Adres Bilgileri</h3>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Adres Etiketi</label>
+                            <input
+                                type="text"
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.addressLabel}
+                                onChange={(e) => setFormData({ ...formData, addressLabel: e.target.value })}
+                                placeholder="Ev, İş, vb."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Şehir</label>
+                            <input
+                                type="text"
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.city}
+                                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                placeholder="İstanbul, Ankara, vb."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">İlçe</label>
+                            <input
+                                type="text"
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.district}
+                                onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                                placeholder="Kadıköy, Çankaya, vb."
+                            />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Tam Adres</label>
+                            <textarea
+                                rows={3}
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                                value={formData.fullAddress}
+                                onChange={(e) => setFormData({ ...formData, fullAddress: e.target.value })}
+                                placeholder="Sokak, mahalle, bina no, daire no..."
+                            />
+                        </div>
+                        <div className="md:col-span-2">
+                            <button
+                                type="submit"
+                                className="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition font-medium"
+                            >
+                                Müşteri Ekle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
+            {/* Hata mesajı */}
+            {error && (
+                <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                    {error}
+                </div>
+            )}
+
+            {/* Loading durumu */}
+            {loading && (
+                <div className="text-center py-12">
+                    <p className="text-slate-600">Müşteri listesi yükleniyor...</p>
+                </div>
+            )}
+
+            {/* Tablo */}
+            {!loading && !error && filteredCustomers.length > 0 && (
+                <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <table className="min-w-full text-sm text-left">
+                        <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-600 border-b border-slate-200">
+                            <tr>
+                                <th className="px-6 py-3">Ad Soyad</th>
+                                <th className="px-6 py-3">E-posta</th>
+                                <th className="px-6 py-3">Telefon</th>
+                                <th className="px-6 py-3">Kayıt Tarihi</th>
+                                <th className="px-6 py-3">Durum</th>
+                                <th className="px-6 py-3">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredCustomers.map((customer) => (
+                                <tr
+                                    key={customer.id}
+                                    className="border-t border-slate-200 hover:bg-slate-50 transition"
+                                >
+                                    <td className="px-6 py-4 font-medium text-slate-900">
+                                        {customer.fullName}
+                                    </td>
+                                    <td className="px-6 py-4 text-slate-600">{customer.email}</td>
+                                    <td className="px-6 py-4 text-slate-600">{customer.phone}</td>
+                                    <td className="px-6 py-4 text-slate-600">
+                                        {formatDate(customer.createdAt)}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {customer.isActive ? (
+                                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
+                                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                                Aktif
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
+                                                <span className="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                                                Pasif
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => fetchCustomerDetails(customer)}
+                                                className="text-emerald-600 hover:text-emerald-800 font-medium text-sm"
+                                            >
+                                                Detay
+                                            </button>
+                                            <button
+                                                onClick={() => handleEdit(customer)}
+                                                className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+                                            >
+                                                Düzenle
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(customer.id, customer.fullName)}
+                                                className="text-red-600 hover:text-red-800 font-medium text-sm"
+                                            >
+                                                Sil
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {/* Boş durum */}
+            {!loading && !error && filteredCustomers.length === 0 && (
+                <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+                    <p className="text-slate-600">Henüz kayıtlı müşteri bulunmuyor.</p>
+                </div>
+            )}
+
+            {/* Detail Modal */}
+            {selectedCustomer && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-800">{selectedCustomer.fullName}</h2>
+                                <p className="text-sm text-slate-500">Müşteri Detayları</p>
+                            </div>
+                            <button onClick={() => setSelectedCustomer(null)} className="text-slate-400 hover:text-slate-600">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+
+                        <div className="flex border-b border-slate-200 overflow-x-auto">
+                            <button
+                                onClick={() => setDetailTab("profile")}
+                                className={`flex-1 min-w-[100px] py-3 text-sm font-medium whitespace-nowrap ${detailTab === "profile" ? "text-emerald-600 border-b-2 border-emerald-600" : "text-slate-500 hover:text-slate-700"}`}
+                            >
+                                Profil
+                            </button>
+                            <button
+                                onClick={() => setDetailTab("jobs")}
+                                className={`flex-1 min-w-[100px] py-3 text-sm font-medium whitespace-nowrap ${detailTab === "jobs" ? "text-emerald-600 border-b-2 border-emerald-600" : "text-slate-500 hover:text-slate-700"}`}
+                            >
+                                İşler ({customerJobs.length})
+                            </button>
+                            <button
+                                onClick={() => setDetailTab("finance")}
+                                className={`flex-1 min-w-[100px] py-3 text-sm font-medium whitespace-nowrap ${detailTab === "finance" ? "text-emerald-600 border-b-2 border-emerald-600" : "text-slate-500 hover:text-slate-700"}`}
+                            >
+                                Finans
+                            </button>
+                            <button
+                                onClick={() => setDetailTab("addresses")}
+                                className={`flex-1 min-w-[100px] py-3 text-sm font-medium whitespace-nowrap ${detailTab === "addresses" ? "text-emerald-600 border-b-2 border-emerald-600" : "text-slate-500 hover:text-slate-700"}`}
+                            >
+                                Adresler ({customerAddresses.length})
+                            </button>
+                            <button
+                                onClick={() => setDetailTab("products")}
+                                className={`flex-1 min-w-[100px] py-3 text-sm font-medium whitespace-nowrap ${detailTab === "products" ? "text-emerald-600 border-b-2 border-emerald-600" : "text-slate-500 hover:text-slate-700"}`}
+                            >
+                                Ürünler ({customerProducts.length})
+                            </button>
+                            <button
+                                onClick={() => setDetailTab("invoices")}
+                                className={`flex-1 min-w-[100px] py-3 text-sm font-medium whitespace-nowrap ${detailTab === "invoices" ? "text-emerald-600 border-b-2 border-emerald-600" : "text-slate-500 hover:text-slate-700"}`}
+                            >
+                                Fatura ({customerDocuments.filter(d => d.type === 1).length})
+                            </button>
+                            <button
+                                onClick={() => setDetailTab("waybills")}
+                                className={`flex-1 min-w-[100px] py-3 text-sm font-medium whitespace-nowrap ${detailTab === "waybills" ? "text-emerald-600 border-b-2 border-emerald-600" : "text-slate-500 hover:text-slate-700"}`}
+                            >
+                                İrsaliye ({customerDocuments.filter(d => d.type === 2).length})
+                            </button>
+                            <button
+                                onClick={() => setDetailTab("offers")}
+                                className={`flex-1 min-w-[100px] py-3 text-sm font-medium whitespace-nowrap ${detailTab === "offers" ? "text-emerald-600 border-b-2 border-emerald-600" : "text-slate-500 hover:text-slate-700"}`}
+                            >
+                                Teklifler ({customerDocuments.filter(d => d.type === 3).length})
+                            </button>
+                        </div>
+
+                        <div className="p-6 overflow-y-auto">
+                            {detailsLoading ? (
+                                <div className="text-center py-8">Yükleniyor...</div>
+                            ) : (
+                                <>
+                                    {detailTab === "profile" && (
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div>
+                                                <label className="block text-xs text-slate-500 uppercase mb-1">E-posta</label>
+                                                <p className="text-slate-800 font-medium">{selectedCustomer.email}</p>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-slate-500 uppercase mb-1">Telefon</label>
+                                                <p className="text-slate-600">{selectedCustomer.phone}</p>
+                                            </div>
+                                            <div>
+                                                <label className="text-sm font-medium text-slate-500">TC Kimlik No</label>
+                                                <p className="text-slate-600">{(selectedCustomer as any).tc || "Belirtilmemiş"}</p>
+                                            </div>
+                                            <div>
+                                                <label className="text-sm font-medium text-slate-500">VKN (Vergi Kimlik No)</label>
+                                                <p className="text-slate-600">{(selectedCustomer as any).vkn || "Belirtilmemiş"}</p>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-slate-500 uppercase mb-1">Kayıt Tarihi</label>
+                                                <p className="text-slate-800 font-medium">{formatDate(selectedCustomer.createdAt)}</p>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-slate-500 uppercase mb-1">Durum</label>
+                                                <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${selectedCustomer.isActive ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
+                                                    {selectedCustomer.isActive ? "Aktif" : "Pasif"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {detailTab === "jobs" && (
+                                        <div className="space-y-4">
+                                            {customerJobs.length === 0 ? (
+                                                <p className="text-center text-slate-500 py-4">Kayıtlı iş bulunamadı.</p>
+                                            ) : (
+                                                customerJobs.map((job: any) => (
+                                                    <div key={job.id} className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50">
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <h4 className="font-semibold text-slate-800">{job.title}</h4>
+                                                            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
+                                                                {["Bekliyor", "Planlandı", "Devam Ediyor", "Tamamlandı", "İptal"][job.status]}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-sm text-slate-600 mb-2">{job.description}</p>
+                                                        <div className="flex justify-between text-xs text-slate-500">
+                                                            <span>Personel: {job.assignedPersonnelName || "-"}</span>
+                                                            <span>Tutar: {job.estimatedCost?.toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}</span>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {detailTab === "finance" && (
+                                        <div>
+                                            {customerBalance && (
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                                    <div className="bg-red-50 p-4 rounded-lg border border-red-100">
+                                                        <p className="text-xs text-red-600 uppercase font-semibold mb-1">Toplam Borç</p>
+                                                        <p className="text-xl font-bold text-red-700">
+                                                            {customerBalance.totalExpense?.toLocaleString("tr-TR", { style: "currency", currency: "TRY" }) || "₺0,00"}
+                                                        </p>
+                                                    </div>
+                                                    <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+                                                        <p className="text-xs text-emerald-600 uppercase font-semibold mb-1">Toplam Ödenen</p>
+                                                        <p className="text-xl font-bold text-emerald-700">
+                                                            {customerBalance.totalIncome?.toLocaleString("tr-TR", { style: "currency", currency: "TRY" }) || "₺0,00"}
+                                                        </p>
+                                                    </div>
+                                                    <div className={`p-4 rounded-lg border ${customerBalance.totalBalance > 0 ? 'bg-orange-50 border-orange-100' : 'bg-slate-50 border-slate-100'}`}>
+                                                        <p className="text-xs uppercase font-semibold mb-1" style={{ color: customerBalance.totalBalance > 0 ? '#ea580c' : '#64748b' }}>
+                                                            {customerBalance.totalBalance > 0 ? 'Kalan Borç' : 'Bakiye'}
+                                                        </p>
+                                                        <p className={`text-xl font-bold ${customerBalance.totalBalance > 0 ? 'text-orange-700' : 'text-slate-700'}`}>
+                                                            {customerBalance.totalBalance?.toLocaleString("tr-TR", { style: "currency", currency: "TRY" }) || "₺0,00"}
+                                                        </p>
+                                                    </div>
+                                                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                                        <p className="text-xs text-blue-600 uppercase font-semibold mb-1">Son Güncelleme</p>
+                                                        <p className="text-sm font-medium text-blue-700">
+                                                            {new Date(customerBalance.lastUpdated).toLocaleDateString("tr-TR", {
+                                                                day: 'numeric',
+                                                                month: 'short',
+                                                                year: 'numeric'
+                                                            })}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <h4 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                                                <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                </svg>
+                                                Hareket Geçmişi
+                                            </h4>
+                                            <div className="space-y-2">
+                                                {customerTransactions.length === 0 ? (
+                                                    <p className="text-center text-slate-500 py-8 bg-slate-50 rounded-lg">İşlem bulunamadı.</p>
+                                                ) : (
+                                                    customerTransactions.map((tx: any) => (
+                                                        <div key={tx.id} className="flex justify-between items-start p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition">
+                                                            <div className="flex-1">
+                                                                <div className="flex items-center gap-2 mb-1">
+                                                                    <p className="text-sm font-semibold text-slate-800">{tx.description}</p>
+                                                                    {tx.jobTitle && (
+                                                                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                                                            İş: {tx.jobTitle}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex gap-4 text-xs text-slate-500">
+                                                                    <span>📅 {new Date(tx.createdAt).toLocaleDateString("tr-TR", { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                                                    {tx.referenceNumber && (
+                                                                        <span>🔖 Ref: {tx.referenceNumber}</span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            <div className="text-right ml-4">
+                                                                <span className={`text-lg font-bold ${tx.type === 0 ? "text-emerald-600" : "text-red-600"}`}>
+                                                                    {tx.type === 0 ? "+" : "-"}{tx.amount.toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}
+                                                                </span>
+                                                                <p className="text-xs text-slate-500 mt-1">
+                                                                    {tx.type === 0 ? "Ödeme" : "Borç"}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {detailTab === "addresses" && (
+                                            <h4 className="font-semibold text-slate-800">{prod.productName}</h4>
+                                            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
+                                                {prod.quantity} Adet
+                                            </span>
+                                        </div>
+                            <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
+                                <div>
+                                    <span className="text-slate-400 text-xs block">Seri No</span>
+                                    {prod.serialNumber || "-"}
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 text-xs block">Satış Tarihi</span>
+                                    {new Date(prod.createdAt).toLocaleDateString("tr-TR")}
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 text-xs block">Birim Fiyat</span>
+                                    {prod.unitPrice.toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 text-xs block">Toplam</span>
+                                    {prod.totalPrice.toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}
+                                </div>
+                            </div>
+                            {prod.notes && (
+                                <p className="text-xs text-slate-500 mt-2 border-t border-slate-100 pt-2">
+                                    Not: {prod.notes}
+                                </p>
+                            )}
+                        </div>
+                        ))
+                            )}
+                    </div>
+                    )}
+
+                    {/* Document Tabs */}
+                    {(detailTab === "invoices" || detailTab === "waybills" || detailTab === "offers") && (
+                        <div>
+                            <div className="flex justify-between items-center mb-4">
+                                <h4 className="font-semibold text-slate-800">
+                                    {detailTab === "invoices" && "Fatura Belgeleri"}
+                                    {detailTab === "waybills" && "İrsaliye Belgeleri"}
+                                    {detailTab === "offers" && "Teklif Belgeleri"}
+                                </h4>
+                                <label className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm cursor-pointer hover:bg-emerald-700 transition">
+                                    {uploadingDoc ? "Yükleniyor..." : "+ Belge Ekle"}
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => handleDocumentUpload(e, detailTab === "invoices" ? 1 : detailTab === "waybills" ? 2 : 3)}
+                                        disabled={uploadingDoc}
+                                    />
+                                </label>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                {customerDocuments
+                                    .filter(doc =>
+                                        (detailTab === "invoices" && doc.type === 1) ||
+                                        (detailTab === "waybills" && doc.type === 2) ||
+                                        (detailTab === "offers" && doc.type === 3)
+                                    )
+                                    .map((doc: any) => (
+                                        <div key={doc.id} className="border border-slate-200 rounded-lg p-3 hover:shadow-md transition">
+                                            <img
+                                                src={doc.cloudinaryUrl}
+                                                alt={doc.fileName}
+                                                className="w-full h-32 object-cover rounded mb-2 cursor-pointer"
+                                                onClick={() => window.open(doc.cloudinaryUrl, '_blank')}
+                                            />
+                                            <p className="text-xs text-slate-600 truncate mb-1">{doc.fileName}</p>
+                                            <div className="flex justify-between items-center text-xs text-slate-500">
+                                                <span>{new Date(doc.uploadedAt).toLocaleDateString('tr-TR')}</span>
+                                                <button
+                                                    onClick={() => handleDocumentDelete(doc.id)}
+                                                    className="text-red-600 hover:text-red-800 font-medium"
+                                                >
+                                                    Sil
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+                                {customerDocuments.filter(doc =>
+                                    (detailTab === "invoices" && doc.type === 1) ||
+                                    (detailTab === "waybills" && doc.type === 2) ||
+                                    (detailTab === "offers" && doc.type === 3)
+                                ).length === 0 && (
+                                        <div className="col-span-full text-center py-8 text-slate-500">
+                                            Henüz belge eklenmemiş.
+                                        </div>
+                                    )}
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
+                    </div >
+                </div >
+            )
+}
+
+{/* Edit Modal */ }
+{
+    editingCustomer && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl shadow-lg w-full max-w-md">
+                <div className="p-6 border-b border-slate-200 flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-slate-800">Müşteriyi Düzenle</h2>
+                    <button onClick={() => setEditingCustomer(null)} className="text-slate-400 hover:text-slate-600">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                <form onSubmit={handleUpdate} className="p-6 space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Ad Soyad *</label>
+                        <input
+                            type="text"
+                            required
+                            className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                            value={editFormData.fullName}
+                            onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">E-posta *</label>
+                        <input
+                            type="email"
+                            required
+                            className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                            value={editFormData.email}
+                            onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Telefon *</label>
+                        <input
+                            type="tel"
+                            required
+                            className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                            value={editFormData.phone}
+                            onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">TC Kimlik No</label>
+                        <input
+                            type="text"
+                            className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                            value={editFormData.tc}
+                            onChange={(e) => setEditFormData({ ...editFormData, tc: e.target.value })}
+                            placeholder="11 haneli TC no"
+                            maxLength={11}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">VKN (Vergi Kimlik No)</label>
+                        <input
+                            type="text"
+                            className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-900 bg-white"
+                            value={editFormData.vkn}
+                            onChange={(e) => setEditFormData({ ...editFormData, vkn: e.target.value })}
+                            placeholder="10 haneli VKN"
+                            maxLength={10}
+                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            id="isActive"
+                            checked={editFormData.isActive}
+                            onChange={(e) => setEditFormData({ ...editFormData, isActive: e.target.checked })}
+                            className="rounded border-slate-300"
+                        />
+                        <label htmlFor="isActive" className="text-sm font-medium text-slate-700">Aktif Müşteri</label>
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setEditingCustomer(null)}
+                            className="flex-1 bg-slate-200 text-slate-700 py-2 rounded-lg hover:bg-slate-300 transition font-medium"
+                        >
+                            İptal
+                        </button>
+                        <button
+                            type="submit"
+                            className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+                        >
+                            Güncelle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    )
+}
+        </div >
+    );
+}
