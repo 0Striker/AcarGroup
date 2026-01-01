@@ -638,7 +638,7 @@ function OfferCreateContent() {
         });
 
         // @ts-ignore
-        let finalY = doc.lastAutoTable.finalY + 2; // Little overlap fix
+        const finalY = doc.lastAutoTable.finalY + 2; // Little overlap fix
 
         // Totals Table (Manual)
         const boxWidth = 70;
@@ -787,7 +787,7 @@ function OfferCreateContent() {
         });
 
         // @ts-ignore
-        let finalY = doc.lastAutoTable.finalY + 2;
+        const finalY = doc.lastAutoTable.finalY + 2;
 
         // Totals (Same right side)
         const boxWidth = 70;

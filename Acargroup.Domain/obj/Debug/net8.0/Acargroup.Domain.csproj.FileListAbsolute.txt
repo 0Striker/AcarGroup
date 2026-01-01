@@ -9,3 +9,15 @@
 /Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/refint/Acargroup.Domain.dll
 /Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/Acargroup.Domain.pdb
 /Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/obj/Debug/net8.0/ref/Acargroup.Domain.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\bin\Debug\net8.0\Acargroup.Domain.deps.json
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\bin\Debug\net8.0\Acargroup.Domain.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\bin\Debug\net8.0\Acargroup.Domain.pdb
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\obj\Debug\net8.0\Acargroup.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\obj\Debug\net8.0\Acargroup.Domain.AssemblyInfoInputs.cache
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\obj\Debug\net8.0\Acargroup.Domain.AssemblyInfo.cs
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\obj\Debug\net8.0\Acargroup.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\obj\Debug\net8.0\Acargroup.Domain.sourcelink.json
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\obj\Debug\net8.0\Acargroup.Domain.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\obj\Debug\net8.0\refint\Acargroup.Domain.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\obj\Debug\net8.0\Acargroup.Domain.pdb
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Domain\obj\Debug\net8.0\ref\Acargroup.Domain.dll

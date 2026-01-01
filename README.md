@@ -7,7 +7,7 @@ Acar Group şirketinin kurumsal web sitesi projesi.
 Bu proje iki ana bileşenden oluşur:
 
 ### Frontend (Next.js)
-- **Framework**: Next.js 16.0.3
+- **Framework**: Next.js 16.0.10
 - **UI Kütüphanesi**: React 19.2.0
 - **Styling**: Tailwind CSS 4
 - **Öne Çıkan Özellikler**: 

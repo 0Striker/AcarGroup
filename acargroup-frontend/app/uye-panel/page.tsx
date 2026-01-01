@@ -18,17 +18,18 @@ export default function MemberPanelPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<TabType>("summary");
     const [isLoading, setIsLoading] = useState(true);
+    const [customer, setCustomer] = useState<any>(null);
 
     useEffect(() => {
-        const { token } = getAuth();
-        if (!token) {
+        const auth = getAuth();
+        if (!auth?.token) {
             router.replace("/uye-giris");
             return;
         }
+        setCustomer(auth.customer);
         setIsLoading(false);
     }, [router]);
 
-    const { customer } = getAuth();
     const customerName = customer?.fullName || "";
     const isInactive = customer?.isActive === false;
 

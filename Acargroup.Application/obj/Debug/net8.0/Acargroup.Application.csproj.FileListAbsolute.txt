@@ -13,3 +13,19 @@
 /Users/rodeo/Desktop/AcarGroupSite/Acargroup.Application/obj/Debug/net8.0/refint/Acargroup.Application.dll
 /Users/rodeo/Desktop/AcarGroupSite/Acargroup.Application/obj/Debug/net8.0/Acargroup.Application.pdb
 /Users/rodeo/Desktop/AcarGroupSite/Acargroup.Application/obj/Debug/net8.0/ref/Acargroup.Application.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\bin\Debug\net8.0\Acargroup.Application.deps.json
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\bin\Debug\net8.0\Acargroup.Application.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\bin\Debug\net8.0\Acargroup.Application.pdb
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\bin\Debug\net8.0\Acargroup.Domain.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\bin\Debug\net8.0\Acargroup.Domain.pdb
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\Acargroup.Application.csproj.AssemblyReference.cache
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\Acargroup.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\Acargroup.Application.AssemblyInfoInputs.cache
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\Acargroup.Application.AssemblyInfo.cs
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\Acargroup.Application.csproj.CoreCompileInputs.cache
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\Acargroup.Application.sourcelink.json
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\Acargrou.73DFA173.Up2Date
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\Acargroup.Application.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\refint\Acargroup.Application.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\Acargroup.Application.pdb
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Application\obj\Debug\net8.0\ref\Acargroup.Application.dll

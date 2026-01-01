@@ -36,3 +36,42 @@
 /Users/rodeo/Desktop/AcarGroupSite/Acargroup.Infrastructure/bin/Debug/net8.0/LatoFont/Lato-Thin.ttf
 /Users/rodeo/Desktop/AcarGroupSite/Acargroup.Infrastructure/bin/Debug/net8.0/LatoFont/Lato-ThinItalic.ttf
 /Users/rodeo/Desktop/AcarGroupSite/Acargroup.Infrastructure/bin/Debug/net8.0/LatoFont/OFL.txt
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-Black.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-BlackItalic.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-Bold.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-BoldItalic.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-ExtraBold.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-ExtraBoldItalic.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-ExtraLight.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-ExtraLightItalic.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-Italic.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-Light.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-LightItalic.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-Medium.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-MediumItalic.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-Regular.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-SemiBold.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-SemiBoldItalic.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-Thin.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\Lato-ThinItalic.ttf
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\LatoFont\OFL.txt
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\Acargroup.Infrastructure.deps.json
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\Acargroup.Infrastructure.runtimeconfig.json
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\Acargroup.Infrastructure.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\Acargroup.Infrastructure.pdb
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\Acargroup.Application.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\Acargroup.Domain.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\Acargroup.Application.pdb
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\bin\Debug\net8.0\Acargroup.Domain.pdb
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargroup.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargroup.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargroup.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargroup.Infrastructure.AssemblyInfo.cs
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargroup.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargroup.Infrastructure.sourcelink.json
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargrou.43658EDA.Up2Date
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargroup.Infrastructure.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\refint\Acargroup.Infrastructure.dll
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargroup.Infrastructure.pdb
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\Acargroup.Infrastructure.genruntimeconfig.cache
+C:\Users\Berke K\Desktop\Projects\AntiGravity\AcarGroup\Acargroup.Infrastructure\obj\Debug\net8.0\ref\Acargroup.Infrastructure.dll

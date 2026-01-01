@@ -1,21 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rWPtXuFUIcQ=",
+  "dgSpecHash": "dJ2XWK/9c0Y=",
   "success": true,
-  "projectFilePath": "/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/Acargroup.Domain.csproj",
-  "expectedPackageFiles": [
-    "/Users/rodeo/.nuget/packages/microsoft.netcore.app.ref/8.0.18/microsoft.netcore.app.ref.8.0.18.nupkg.sha512",
-    "/Users/rodeo/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.18/microsoft.aspnetcore.app.ref.8.0.18.nupkg.sha512"
-  ],
-  "logs": [
-    {
-      "code": "NU1900",
-      "level": "Warning",
-      "message": "Error occurred while getting package vulnerability data: Access to the path '/Users/rodeo/.local/share' is denied.",
-      "projectPath": "/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/Acargroup.Domain.csproj",
-      "warningLevel": 1,
-      "filePath": "/Users/rodeo/Desktop/AcarGroupSite/Acargroup.Domain/Acargroup.Domain.csproj",
-      "targetGraphs": []
-    }
-  ]
+  "projectFilePath": "C:\\Users\\Berke K\\Desktop\\Projects\\AntiGravity\\AcarGroup\\Acargroup.Domain\\Acargroup.Domain.csproj",
+  "expectedPackageFiles": [],
+  "logs": []
 }
