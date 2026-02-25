@@ -1,0 +1,14 @@
+# .NET
+bin/
+obj/
+*.user
+publish_output/
+
+# Next.js
+acargroup-frontend/.next/
+acargroup-frontend/node_modules/
+acargroup-frontend/.env.local
+
+# General
+.DS_Store
+*.log
