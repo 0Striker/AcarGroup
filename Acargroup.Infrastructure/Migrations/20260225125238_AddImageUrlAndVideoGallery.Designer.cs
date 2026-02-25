@@ -3,6 +3,7 @@ using System;
 using Acargroup.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Acargroup.Infrastructure.Migrations
 {
     [DbContext(typeof(AcargroupDbContext))]
-    partial class AcargroupDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260225125238_AddImageUrlAndVideoGallery")]
+    partial class AddImageUrlAndVideoGallery
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
