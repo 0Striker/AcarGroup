@@ -16,7 +16,18 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "http://acargrp.com",
+                "https://acargrp.com",
+                "http://www.acargrp.com",
+                "https://www.acargrp.com",
+                "http://acargrp.com.tr",
+                "https://acargrp.com.tr",
+                "http://www.acargrp.com.tr",
+                "https://www.acargrp.com.tr",
+                "http://213.238.182.222"
+              )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
